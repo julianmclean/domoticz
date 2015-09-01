@@ -1147,6 +1147,8 @@ $(document).ready(function() {
 					<a class="brand hidden-phone" id="version" href="#Dashboard"><h1>Domoticz</h1> <h2 id="appversion" tooltip-html="{{config.versiontooltip}}" tooltip-placement="right" class="version-tooltip">*</h2></a>
                         <ul class="nav" id="appnavbar">
                             <li ng-show="config.EnableTabDashboard" ng-class="{'current_page_item':getClass('/Dashboard')}" class="clDashboard"><a id="cDashboard" href="#Dashboard"><img src="images/desktop.png"> <span class="hidden-phone hidden-tablet" data-i18n="Dashboard">Dashboard</span></a></li>
+                            <li class="divider-vertical clUPnP"></li>
+								<li ng-class="{'current_page_item':getClass('/UPnP')}" class="clUPnP"><a id="cUPnP" href="#UPnP"><img src="images/program_mini.png"> <span class="hidden-phone hidden-tablet" data-i18n="UPnP">UPnP</span></a></li>
                             <li ng-show="config.EnableTabFloorplans" class="divider-vertical clFloorplans"></li>
 							<li ng-show="config.EnableTabFloorplans" ng-class="{'current_page_item':getClass('/Floorplans')}" class="clFloorplans"><a id="cFloorplans" href="#Floorplans"><img src="images/house.png"> <span class="hidden-phone hidden-tablet" data-i18n="Floorplan">Floorplan</span></a></li>
                             <li ng-show="config.EnableTabLights" class="divider-vertical clLightSwitches"></li>
