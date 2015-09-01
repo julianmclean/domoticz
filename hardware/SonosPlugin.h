@@ -121,7 +121,7 @@ public:
 	~CSonosPlugin(void);
 
 	// Domoticz-->Hardware
-	void WriteToHardware(const char *pdata, const unsigned char length);
+	bool WriteToHardware(const char *pdata, const unsigned char length);
 	
 	// Update Renderer Value in Domoticz
 	void UpdateRendererValue( int qType, UPnPDevice& upnpdevice, const std::string& devValue, int volume );
