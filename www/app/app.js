@@ -275,6 +275,10 @@ define(['angularAMD', 'angular-route', 'angular-animate', 'ng-grid', 'ng-grid-fl
 				templateUrl: 'views/update.html',
 				controller: 'UpdateController'
 			  })).
+			  when('/UPnP', angularAMD.route({
+				templateUrl: 'views/upnp.html',
+				controller: 'UPnPController'
+			  })).
 			  when('/Users', angularAMD.route({
 				templateUrl: 'views/users.html',
 				controller: 'UsersController'
