@@ -99,6 +99,10 @@ private:
 	friend class CNetAtmoWeatherStation;
 	friend class CAnnaThermostat;
 	friend class SatelIntegra;
+	
+	//SONOS	
+	friend class CSonosPlugin;
+
 
 	virtual bool StartHardware()=0;
 	virtual bool StopHardware()=0;
