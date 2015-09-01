@@ -75,6 +75,7 @@
 #include "../hardware/AnnaThermostat.h"
 #include "../hardware/Winddelen.h"
 #include "../hardware/SatelIntegra.h"
+#include "../hardware/SonosPlugin.h"				// m_g_s_g - Sonos
 
 // load notifications configuration
 #include "../notifications/NotificationHelper.h"
@@ -811,6 +812,10 @@ bool MainWorker::AddHardwareFromParams(
 		pHardware = new CGpio(ID);
 #endif
 		break;
+	case HTYPE_SonosPlugin:				// m_g_s_g - Sonos
+		pHardware = new CSonosPlugin(ID);
+		break;
+
 	}
 
 	if (pHardware)
@@ -3926,6 +3931,7 @@ unsigned long long MainWorker::decode_Lighting2(const CDomoticzHardwareBase *pHa
 		case sTypeAC:
 		case sTypeHEU:
 		case sTypeANSLUT:
+		case sTypeSonos:
 		case sTypeZWaveSwitch:
 			switch (pResponse->LIGHTING2.subtype)
 			{
@@ -3938,6 +3944,12 @@ unsigned long long MainWorker::decode_Lighting2(const CDomoticzHardwareBase *pHa
 			case sTypeANSLUT:
 				WriteMessage("subtype       = ANSLUT");
 				break;
+			case sTypeSonos:										// Change for Sonos
+				WriteMessage("subtype       = Sonos");
+				break;			
+			case sTypeUPnP:
+				WriteMessage("subtype       = UPnP");
+				break;	
 			case sTypeZWaveSwitch:
 				WriteMessage("subtype       = ZWave");
 				break;
