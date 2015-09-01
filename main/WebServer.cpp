@@ -6781,6 +6781,7 @@ namespace http {
 
 					unsigned char dType = atoi(sd[5].c_str());
 					unsigned char dSubType = atoi(sd[6].c_str());
+					unsigned char dUnit = atoi(sd[2].c_str());
 					unsigned char used = atoi(sd[4].c_str());
 					int nValue = atoi(sd[9].c_str());
 					std::string sValue = sd[10];
@@ -6972,6 +6973,15 @@ namespace http {
 								)
 								continue;
 						}
+						else if (rfilter == "upnp")
+						{
+							if (
+								(!((dType == pTypeLighting2) && (dSubType == sTypeSonos) && (dUnit == 0))) &&
+								(!((dType == pTypeLighting2) && (dSubType == sTypeUPnP) && (dUnit == 0)))
+								)
+								continue;
+						}
+						
 					}
 
 					root["result"][ii]["HardwareID"] = hardwareID;
@@ -7266,6 +7276,17 @@ namespace http {
 						else if (switchtype == STYPE_Motion)
 						{
 							root["result"][ii]["TypeImg"] = "motion";
+						}
+						
+//						if (switchtype == STYPE_UPnP)
+						if ((dSubType == sTypeSonos) || (dSubType == sTypeUPnP))
+						{
+							// Sonos / UPnP - Future: create switchtype STYPE_UPnP and put this there
+							root["result"][ii]["TypeImg"] = "program_mini";
+							root["result"][ii]["InternalState"] = (IsLightSwitchOn(lstatus) == true) ? "Playing" : "Stopped";
+							root["result"][ii]["StrParam1"] = std::string(sd[21]);
+							root["result"][ii]["StrParam2"] = std::string(sd[22]);
+	
 						}
 						if (llevel != 0)
 							sprintf(szData, "%s, Level: %d %%", lstatus.c_str(), llevel);
