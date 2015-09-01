@@ -196,6 +196,7 @@ const char *Hardware_Type_Desc(int hType)
 		{ HTYPE_Kodi, "Kodi Media Server" },
 		{ HTYPE_ANNATHERMOSTAT, "Plugwise Anna Thermostat via LAN interface" },
 		{ HTYPE_SatelIntegra, "Satel Integra via LAN interface" },
+		{ HTYPE_SonosPlugin, "Sonos" },
   		{ 0, NULL, NULL }
 	};
 	return findTableIDSingle1 (Table, hType);
@@ -504,6 +505,8 @@ const char *RFX_Type_SubType_Desc(const unsigned char dType, const unsigned char
 		{ pTypeLighting2, sTypeHEU, "HomeEasy EU" },
 		{ pTypeLighting2, sTypeANSLUT, "Anslut" },
 		{ pTypeLighting2, sTypeZWaveSwitch, "ZWave" },
+		{ pTypeLighting2, sTypeSonos, "Sonos" },
+
 
 		{ pTypeLighting3, sTypeKoppla, "Ikea Koppla" },
 
@@ -1166,6 +1169,7 @@ void GetLightStatus(
 		case sTypeAC:
 		case sTypeHEU:
 		case sTypeANSLUT:
+		case sTypeSonos:
 			bHaveDimmer=true;
 			bHaveGroupCmd=true;
 			switch (nValue)
@@ -1964,6 +1968,46 @@ bool GetLightCommand(
 			cmd=light2_sSetGroupLevel;
 			return true;
 		}
+		else if (switchcmd=="Play")				// Sonos / UPnP
+		{
+			cmd=light2_sOn;						// sonos_sPlay
+			return true;
+		}
+		else if (switchcmd=="Pause")			// Sonos / UPnP
+		{
+			cmd=light2_sOff;					// sonos_sPause
+			return true;
+		}
+		else if (switchcmd=="TTS")				// Sonos / UPnP
+		{
+			cmd=6;								// sonos_sSay
+			return true;
+		}
+		else if (switchcmd=="Say")				// Sonos / UPnP
+		{
+			cmd=6;								// sonos_sSay
+			return true;
+		}		
+		else if (switchcmd=="Debug")			// Sonos / UPnP
+		{
+			cmd=0x10;							// sonos_sDebug
+			return true;
+		}
+		else if (switchcmd=="Preset1")			// Sonos / UPnP
+		{
+			cmd=0x11;							// sonos_sPreset;
+			return true;
+		}
+		else if (switchcmd=="Preset2")			// Sonos / UPnP
+		{
+			cmd=0x12;							// sonos_sPreset+1;
+			return true;
+		}
+		else if (switchcmd=="Preset3")			// Sonos / UPnP
+		{
+			cmd=0x13;							// sonos_sPreset+2;
+			return true;
+		}		
 		else
 			return false;
 		break;
