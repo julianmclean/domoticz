@@ -1016,6 +1016,10 @@ namespace http {
 			else if (htype == HTYPE_RaspberryGPIO) {
 				//all fine here!
 			}
+			else if ((htype == HTYPE_SonosPlugin)) {		// m_g_s_g - Sonos
+				// new Plugins: all fine here! We just need a name and type
+				// - no extra parameters needed - address, port, name, password
+			}			
 			else
 				return;
 
