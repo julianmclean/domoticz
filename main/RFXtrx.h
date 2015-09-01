@@ -64,7 +64,7 @@ SDK version 7.01
 	SelectPlus200689103 Black Chime added
 
 SDK version 7.00
-	TEMP7 - TSS330 added and TH9 – TSS320 added
+	TEMP7 - TSS330 added and TH9 â€“ TSS320 added
 	BlindsT8 = Chamberlain CS4330CN added
 	SelectPlus200689101 White Chime added
 	Interface command - start receiver added
@@ -410,6 +410,8 @@ SDK version 4.9
 #define sTypeHEU 0x1
 #define sTypeANSLUT 0x2
 #define sTypeKambrook 0x03
+#define sTypeSonos 0x04
+#define sTypeUPnP 0x05
 
 #define light2_sOff 0x0
 #define light2_sOn 0x1
