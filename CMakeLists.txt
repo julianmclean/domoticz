@@ -274,6 +274,7 @@ webserver/server.cpp
 json/json_reader.cpp
 json/json_value.cpp
 json/json_writer.cpp
+hardware/SonosPlugin.cpp
 )
 add_executable(domoticz ${domoticz_SRCS})
 
@@ -430,6 +431,17 @@ IF(RaspberryPi)
 else()
   message(STATUS "Not building on Raspberry Pi. GPIO support disabled.")
 ENDIF(RaspberryPi)
+
+# Added for Sonos / UPnP support
+find_path(gUPnP NAMES gupnp.h HINTS "/usr/include/gupnp-1.0/libgupnp")
+IF(gUPnP)
+  MESSAGE(STATUS "gUPnP includes found at: ${gUPnP}")
+  include_directories(/usr/include/libxml2 /usr/include/libsoup-2.4 /usr/include/glib-2.0 /usr/lib/arm-linux-gnueabihf/glib-2.0/include /usr/include/gupnp-1.0 /usr/include/gssdp-1.0 /usr/include/gupnp-av-1.0)
+  target_link_libraries(domoticz soup-2.4 gupnp-1.0 gssdp-1.0 gupnp-av-1.0 glib-2.0 gobject-2.0 gthread-2.0)  
+else()
+  MESSAGE(FATAL_ERROR "gUPnP not found on your system, see install.txt how to get them installed. (for example 'sudo apt-get install gupnp-1.0 gssdp-1.0 gupnp-av-1.0 glib-2.0 gobject-2.0 gthread-2.0')")
+ENDIF(gUPnP)
+#end Sonos / UPnP support
 
 find_path(TELLDUSCORE_INCLUDE NAMES telldus-core.h)
 if (TELLDUSCORE_INCLUDE)
