@@ -25,6 +25,7 @@ enum _eSwitchType
 	STYPE_VenetianBlindsEU,	//15
 	STYPE_BlindsPercentageInverted, //16
 	STYPE_Media,			//17
+	STYPE_UPnP,				//18 - UPnP / Sonos
 	STYPE_END
 };
 
@@ -127,6 +128,7 @@ enum _eHardwareTypes {
 	HTYPE_WINDDELEN,			//57
 	HTYPE_SatelIntegra,			//58
 	HTYPE_Tellstick,			//59
+	HTYPE_SonosPlugin,          //60
 	HTYPE_END
 };
 
