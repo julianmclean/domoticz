@@ -365,7 +365,7 @@ void CSonosPlugin::Do_Work()
 /*+----------------------------------------------------------------------------+*/
 /*| WriteToHardware - Write from Domoticz UI to the hardware layer             |*/
 /*+----------------------------------------------------------------------------+*/
-void CSonosPlugin::WriteToHardware(const char *pdata, const unsigned char length)
+bool CSonosPlugin::WriteToHardware(const char *pdata, const unsigned char length)
 {
 	tRBUF *pCmd=(tRBUF*) pdata;
 
@@ -529,7 +529,7 @@ void CSonosPlugin::WriteToHardware(const char *pdata, const unsigned char length
 		}
 	}
 
-	return;
+	return true;
 }
 
 /*+----------------------------------------------------------------------------+*/
