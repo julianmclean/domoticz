@@ -224,11 +224,9 @@ bool helperChangeProtocol(std::string &url, int type);
 /*+----------------------------------------------------------------------------+*/
 std::string helperGetUserVariable(const std::string &name)
 {
-	std::stringstream szQuery;
 	std::vector<std::vector<std::string> > result;
 
-	szQuery << "SELECT ID,Name,ValueType,Value FROM UserVariables WHERE (Name==\'" << name << "\')";
-	result = m_sql.safe_query(szQuery.str());
+	result = m_sql.safe_query("SELECT ID,Name,ValueType,Value FROM UserVariables WHERE (Name==\'" << name << "\')");
 	if (result.size()>0) {
 #ifdef _DEBUG
 		_log.Log(LOG_NORM,"(Sonos) User variable %s %s %s %s", result[0][0].c_str(), result[0][1].c_str(), result[0][2].c_str(), result[0][3].c_str());
@@ -333,10 +331,8 @@ void CSonosPlugin::Init()
 	// Check if there is already hardware running for System, if no start it.
 	m_lastquerytime=0;
 	hwId = 0;
-	std::stringstream szQuery;
 	std::vector<std::vector<std::string> > result;
-	szQuery << "SELECT ID,Enabled FROM Hardware WHERE (Type=='" <<HTYPE_SonosPlugin << "') LIMIT 1";
-	result=m_sql.safe_query(szQuery.str());
+	result=m_sql.safe_query("SELECT ID,Enabled FROM Hardware WHERE (Type=='" <<HTYPE_SonosPlugin << "') LIMIT 1");
 
 	if (result.size()>0) {
 		std::vector<std::string> sd=result[0];
@@ -549,7 +545,6 @@ void CSonosPlugin::UpdateRendererValue(	int qType,
 	int					dsubtype=-1;
 	int					dunit;
 	std::string			suffixName;
-	std::stringstream	szQuery;
 	unsigned long		ulIdx=0;
 	int					preset_number;
 	UPnPDevice			*upnpdevice = &p_reference;		// &p_reference
@@ -605,34 +600,23 @@ void CSonosPlugin::UpdateRendererValue(	int qType,
 #ifdef _DEBUG
 	//	_log.Log(LOG_NORM,"(Sonos) Update1 devId %s LIP %8X Value %s", upnpdevice->id.c_str(), upnpdevice->ip, devValue.c_str());
 #endif
-	szQuery << "SELECT ID, Name FROM DeviceStatus WHERE (DeviceID=='" << upnpdevice->id << "' AND Unit=" << dunit << ")";
-	result=m_sql.safe_query(szQuery.str());
+	result=m_sql.safe_query("SELECT ID, Name FROM DeviceStatus WHERE (DeviceID=='" << upnpdevice->id << "' AND Unit=" << dunit << ")");
 
 	// Device is not already added to device list - insert
 	if (result.size()<1)		
 	{
-		szQuery.clear();
-		szQuery.str("");
-
 		// We use a easy devname
 		std::stringstream ssName;
 		ssName << devName << suffixName;
 		std::string devNameEasy = ssName.str();
-		szQuery << 
-			"INSERT INTO DeviceStatus (HardwareID, DeviceID, Unit, Type, SubType, SwitchType, SignalLevel, BatteryLevel, Name, nValue, sValue) "
-			"VALUES (" << hwId << ",'" << upnpdevice->id << "',"<< dunit << "," << dtype << "," <<dsubtype << ",17,12,255,'" << devNameEasy << "'," << devValue << ",'" << devValue << "')";
-		result=m_sql.safe_query(szQuery.str());
+		result=m_sql.safe_query("INSERT INTO DeviceStatus (HardwareID, DeviceID, Unit, Type, SubType, SwitchType, SignalLevel, BatteryLevel, Name, nValue, sValue) VALUES (" << hwId << ",'" << upnpdevice->id << "',"<< dunit << "," << dtype << "," <<dsubtype << ",17,12,255,'" << devNameEasy << "'," << devValue << ",'" << devValue << "')");
 		if (result.size()<0) {
 			_log.Log(LOG_ERROR,"(Sonos) Insert: database error, inserting devID %s", upnpdevice->id.c_str());
 			return;
 		}
 
 		// Get newly created ID
-		szQuery.clear();
-		szQuery.str("");
-		szQuery << 
-			"SELECT ID FROM DeviceStatus WHERE (HardwareID=" << hwId <<" AND DeviceID='" << upnpdevice->id << "' AND Unit=" << dunit << " AND Type=" << dtype << " AND SubType=" << dsubtype <<")";
-		result=m_sql.safe_query(szQuery.str());
+		result=m_sql.safe_query("SELECT ID FROM DeviceStatus WHERE (HardwareID=" << hwId <<" AND DeviceID='" << upnpdevice->id << "' AND Unit=" << dunit << " AND Type=" << dtype << " AND SubType=" << dsubtype <<")");
 		if (result.size()<0) {
 			_log.Log(LOG_ERROR,"(Sonos) Insert: database error, problem getting ID from DeviceStatus for devID %s!", upnpdevice->id.c_str());
 			return;
@@ -659,13 +643,7 @@ void CSonosPlugin::UpdateRendererValue(	int qType,
 		_log.Log(LOG_NORM,"(Sonos) Update: Id=%s Name=\'%s\' Idx=%d LIP=%8x Value=%s", 
 			upnpdevice->id.c_str(), upnpdevice->name.c_str(), ulIdx, upnpdevice->ip, devValue.c_str() );
 #endif
-		szQuery.clear();
-		szQuery.str("");
-		szQuery << "UPDATE DeviceStatus SET HardwareID = " << hwId << ", nValue=" << devValue << ", sValue ='" << devValue << 
-			"', LastUpdate='" << szLastUpdate << "', StrParam1='" << upnpdevice->title << 
-			"', StrParam2='" << upnpdevice->device_icon <<
-			"' WHERE (DeviceID == '" << upnpdevice->id << "' AND Unit=" << dunit << ")";
-		m_sql.safe_query(szQuery.str());
+		m_sql.safe_query("UPDATE DeviceStatus SET HardwareID = " << hwId << ", nValue=" << devValue << ", sValue ='" << devValue << "', LastUpdate='" << szLastUpdate << "', StrParam1='" << upnpdevice->title << "', StrParam2='" << upnpdevice->device_icon << "' WHERE (DeviceID == '" << upnpdevice->id << "' AND Unit=" << dunit << ")");
 
 		// UNIT_Sonos_TempPlay1 - Temperature Device for Play:1
 		if (qType == UNIT_Sonos_TempPlay1) {
@@ -690,13 +668,7 @@ void CSonosPlugin::UpdateRendererValue(	int qType,
 			m_sql.m_LastSwitchID=upnpdevice->id;
 			m_sql.m_LastSwitchRowID=ulIdx;
 
-			szQuery.clear();
-			szQuery.str("");
-
-			szQuery << 
-				"INSERT INTO LightingLog (DeviceRowID, nValue, sValue) "
-				"VALUES ('" << ulIdx <<"', '" << nValue <<"', '" << upnpdevice->volume << "')";	
-			m_sql.safe_query(szQuery.str());
+			m_sql.safe_query("INSERT INTO LightingLog (DeviceRowID, nValue, sValue) VALUES ('" << ulIdx <<"', '" << nValue <<"', '" << upnpdevice->volume << "')");
 
 			// Send as Lighting 2
 			tRBUF lcmd;
@@ -733,13 +705,7 @@ void CSonosPlugin::UpdateRendererValue(	int qType,
 			m_sql.m_LastSwitchID=upnpdevice->id;
 			m_sql.m_LastSwitchRowID=ulIdx;
 
-			szQuery.clear();
-			szQuery.str("");
-
-			szQuery << 
-				"INSERT INTO LightingLog (DeviceRowID, nValue, sValue) "
-				"VALUES ('" << ulIdx <<"', '" << nValue <<"', '" << upnpdevice->volume << "')";
-			m_sql.safe_query(szQuery.str());
+			m_sql.safe_query("INSERT INTO LightingLog (DeviceRowID, nValue, sValue) VALUES ('" << ulIdx <<"', '" << nValue <<"', '" << upnpdevice->volume << "')");
 
 			/* Push button!!! */
 			tRBUF lcmd;
@@ -787,7 +753,6 @@ void CSonosPlugin::UpdateSwitchValue(	int qType,
 	int					dsubtype=-1;
 	int					dunit;
 	std::string			suffixName;
-	std::stringstream	szQuery;
 
 	unsigned long		ulIdx=0;
 	std::string			devName = upnpdevice->name; 
@@ -811,35 +776,24 @@ void CSonosPlugin::UpdateSwitchValue(	int qType,
 #ifdef _DEBUG
 	//	_log.Log(LOG_NORM,"(Belkin) Update1 devId %s LIP %8X Value %s", upnpdevice->id.c_str(), upnpdevice->ip, devValue.c_str());
 #endif
-	szQuery << "SELECT ID, Name FROM DeviceStatus WHERE (DeviceID=='" << upnpdevice->id << "' AND Unit=" << dunit << ")";
-	result=m_sql.safe_query(szQuery.str());
+	result=m_sql.safe_query("SELECT ID, Name FROM DeviceStatus WHERE (DeviceID=='" << upnpdevice->id << "' AND Unit=" << dunit << ")");
 
 	// Device is not already added to device list - insert
 	if (result.size()<1)		
 	{
-		szQuery.clear();
-		szQuery.str("");
-
 		// We use a easy devname
 		// @@@ If unit = 0 then switchtype=Dimmer else switchtype=PushOn
 		std::stringstream ssName;
 		ssName << devName << suffixName;
 		std::string devNameEasy = ssName.str();
-		szQuery << 
-			"INSERT INTO DeviceStatus (HardwareID, DeviceID, Unit, Type, SubType, SignalLevel, BatteryLevel, Name, nValue, sValue) "
-			"VALUES (" << hwId << ",'" << upnpdevice->id << "',"<< dunit << "," << dtype << "," <<dsubtype << ",12,255,'" << devNameEasy << "'," << devValue << ",'" << devValue << "')";
-		result=m_sql.safe_query(szQuery.str());
+		result=m_sql.safe_query("INSERT INTO DeviceStatus (HardwareID, DeviceID, Unit, Type, SubType, SignalLevel, BatteryLevel, Name, nValue, sValue) VALUES (" << hwId << ",'" << upnpdevice->id << "',"<< dunit << "," << dtype << "," <<dsubtype << ",12,255,'" << devNameEasy << "'," << devValue << ",'" << devValue << "')");
 		if (result.size()<0) {
 			_log.Log(LOG_ERROR,"(Belkin) Insert: database error, inserting devID %s", upnpdevice->id.c_str());
 			return;
 		}
 
 		// Get newly created ID
-		szQuery.clear();
-		szQuery.str("");
-		szQuery << 
-			"SELECT ID FROM DeviceStatus WHERE (HardwareID=" << hwId <<" AND DeviceID='" << upnpdevice->id << "' AND Unit=" << dunit << " AND Type=" << dtype << " AND SubType=" << dsubtype <<")";
-		result=m_sql.safe_query(szQuery.str());
+		result=m_sql.safe_query("SELECT ID FROM DeviceStatus WHERE (HardwareID=" << hwId <<" AND DeviceID='" << upnpdevice->id << "' AND Unit=" << dunit << " AND Type=" << dtype << " AND SubType=" << dsubtype <<")");
 		if (result.size()<0) {
 			_log.Log(LOG_ERROR,"(Belkin) Insert: database error, problem getting ID from DeviceStatus for devID %s!", upnpdevice->id.c_str());
 			return;
@@ -866,10 +820,7 @@ void CSonosPlugin::UpdateSwitchValue(	int qType,
 		_log.Log(LOG_NORM,"(Belkin) Update: devID %s devName \'%s\' devIdx %d LIP %8x Value %s", 
 			upnpdevice->id.c_str(), strDevName.c_str(), ulIdx, upnpdevice->ip, devValue.c_str() );
 #endif
-		szQuery.clear();
-		szQuery.str("");
-		szQuery << "UPDATE DeviceStatus SET HardwareID = " << hwId << ", nValue=" << devValue << ", sValue ='" << devValue << "', LastUpdate='" << szLastUpdate << "' WHERE (DeviceID == '" << upnpdevice->id << "' AND Unit=" << dunit << ")";
-		m_sql.safe_query(szQuery.str());
+		m_sql.safe_query("UPDATE DeviceStatus SET HardwareID = " << hwId << ", nValue=" << devValue << ", sValue ='" << devValue << "', LastUpdate='" << szLastUpdate << "' WHERE (DeviceID == '" << upnpdevice->id << "' AND Unit=" << dunit << ")");
 
 		if (qType == UNIT_Belkin_OnOff) {
 			int nValue=0;
@@ -879,13 +830,7 @@ void CSonosPlugin::UpdateSwitchValue(	int qType,
 			m_sql.m_LastSwitchID=upnpdevice->id;
 			m_sql.m_LastSwitchRowID=ulIdx;
 
-			szQuery.clear();
-			szQuery.str("");
-
-			szQuery << 
-				"INSERT INTO LightingLog (DeviceRowID, nValue, sValue) "
-				"VALUES ('" << ulIdx <<"', '" << nValue <<"', '" << upnpdevice->level << "')";	// sValue = nValue*15
-			m_sql.safe_query(szQuery.str());
+			m_sql.safe_query("INSERT INTO LightingLog (DeviceRowID, nValue, sValue) VALUES ('" << ulIdx <<"', '" << nValue <<"', '" << upnpdevice->level << "')");
 
 			// Send as Lighting 2
 			tRBUF lcmd;
